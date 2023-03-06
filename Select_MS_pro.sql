@@ -14,11 +14,14 @@ LEFT JOIN album ON track.album_id = album.album_id
 GROUP BY album.album_id;
 
 -- Все исполнители, которые не выпустили альбомы в 2020 году.
-SELECT performer.name FROM performer
-JOIN performeralbum ON performer.performer_id = performeralbum.performer_id 
-JOIN album ON album.album_id = performeralbum.album_id 
-WHERE album.year_of_issue NOT IN (2020)
-GROUP BY performer.name;
+SELECT  p.name FROM performer p 
+	WHERE p.name NOT IN (
+		SELECT DISTINCT p.name FROM performer p 
+		LEFT JOIN performeralbum pa ON p.performer_id = pa.performer_id 
+		LEFT JOIN album al ON al.album_id = pa.album_id 
+		WHERE al.year_of_issue = 2020
+		)
+	ORDER BY p.name;
 
 -- Названия сборников, в которых присутствует конкретный исполнитель (выберите его сами).
 SELECT collection."name" FROM collection
